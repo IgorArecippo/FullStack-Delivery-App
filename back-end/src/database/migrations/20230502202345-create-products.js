@@ -1,24 +1,27 @@
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  async up(queryInterface, Sequelize) {
     await queryInterface.createTable('products', {
-      id: { type: Sequelize.INTEGER,
+      id: {
+        type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
       },
-      name: { type: Sequelize.STRING(100),
+      name: {
+        type: Sequelize.STRING(100),
         allowNull: false,
         unique: true,
       },
       price: { type: Sequelize.DECIMAL(4, 2), allowNull: false },
-      urlImage: { type: Sequelize.STRING(200),
+      urlImage: {
+        type: Sequelize.STRING(200),
         allowNull: false,
         defaultValue: '',
       },
     });
   },
 
-  down: async (queryInterface, _Sequelize) => {
+  async down(queryInterface, _Sequelize) {
     await queryInterface.dropTable('products');
   },
 };
