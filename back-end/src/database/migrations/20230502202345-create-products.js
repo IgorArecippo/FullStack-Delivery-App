@@ -1,7 +1,7 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('products', {
-      id: {
+      id: { 
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
@@ -16,8 +16,7 @@ module.exports = {
       urlImage: {
         type: Sequelize.STRING(200),
         allowNull: false,
-        defaultValue: '',
-      },
+        defaultValue: '' },
     });
   },
 
