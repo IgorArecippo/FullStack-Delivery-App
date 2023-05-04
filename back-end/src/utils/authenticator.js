@@ -11,4 +11,8 @@ const createToken = (data) => jwt.sign({ data }, secret, JWT_CONFIG);
 
 const verifyToken = (token) => jwt.verify(token, secret);
 
-module.exports = { createToken, verifyToken };
+const newToken = (user) => {
+  const token = createToken({ email: user.email, role: user.role, userId: user.id });
+  return token;
+};
+module.exports = { createToken, verifyToken, newToken };

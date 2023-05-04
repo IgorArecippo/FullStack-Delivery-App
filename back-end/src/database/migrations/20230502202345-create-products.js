@@ -16,8 +16,7 @@ module.exports = {
       urlImage: {
         type: Sequelize.STRING(200),
         allowNull: false,
-        defaultValue: '',
-      },
+        defaultValue: '' },
     });
   },
 

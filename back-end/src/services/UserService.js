@@ -1,26 +1,24 @@
 const md5 = require('md5');
-const Users = require('../database/models');
-const { createToken } = require('../utils/authenticator');
+const { User } = require('../database/models');
+const { newToken } = require('../utils/authenticator');
+const { customError, errorMessages, errorStatus } = require('../utils/erros');
 
 const findByEmail = async (email) => {
-    const user = await Users.findOne({ where: { email } });
-    if (!user) {
-        return { type: 401, message: 'Invalid email' };
-    }
+    const user = await User.findOne({
+       where: { 
+        email,
+      },
+      });
+    return user;
 };
 
-const login = async ({ email, password }) => {
-  const user = findByEmail(email);
-  const userPassword = md5(password);
-
-  if (userPassword !== user.password) {
-    return { type: 401, message: 'Invalid password' };
-  }
-
-  const { name, role } = user;
-  const token = createToken({ name, email, role });
-
-  return { type: 200, message: { token } };
+const login = async (email, password) => {
+  const user = await findByEmail(email);
+  if (!user) throw customError(errorStatus.INVALID_FIELDS, errorMessages.INVALID_FIELDS);
+  const userPassword = md5(password) === user.password;
+  if (!userPassword) throw customError(errorStatus.NOT_FOUND, errorMessages.INVALID_FIELDS);
+  const token = newToken(user);
+  return { token, role: user.role, name: user.name };
 };
 
 module.exports = {
