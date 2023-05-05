@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { requestLogin, setToken } from '../services/requests';
 
 export default function Login() {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [btnDisabled, setDisabled] = useState(true);
+  // const [isLogged, setIsLogged] = useState(false);
+  const [failedTryLogin, setFailedTryLogin] = useState(false);
 
   useEffect(() => {
     const validateLogin = () => {
@@ -17,16 +20,36 @@ export default function Login() {
       }
     };
     validateLogin();
-  }, [password, email]);
+  }, [email, password]);
+
+  const login = async (event) => {
+    event.preventDefault();
+
+    try {
+      const { token } = await requestLogin('/login', { email, password });
+
+      setToken(token);
+
+      // const { role } = await requestData('/login/role', { email, password });
+
+      localStorage.setItem('token', token);
+      // localStorage.setItem('role', role);
+
+      // setIsLogged(true);
+    } catch (error) {
+      setFailedTryLogin(true);
+      // setIsLogged(false);
+    }
+  };
 
   const handleChange = (value, setValue) => {
     setValue(value);
   };
 
-  const handleClick = () => {
-    const user = { email };
-    localStorage.setItem('user', JSON.stringify(user));
-  };
+  // const handleClick = () => {
+  //   const user = { email };
+  //   localStorage.setItem('user', JSON.stringify(user));
+  // };
 
   return (
     <form>
@@ -48,22 +71,32 @@ export default function Login() {
           type="button"
           data-testid="common_login__button-login"
           disabled={ btnDisabled }
-          onClick={ handleClick }
+          onClick={ (event) => login(event) }
         >
-          Enter
+          Login
         </button>
       </Link>
       <Link to="/cadatro">
         <button
           type="button"
           data-testid="common_login__button-register"
-          disabled={ btnDisabled }
-          onClick={ handleClick }
+          // disabled={ btnDisabled }
         >
-          Enter
+          Cadastre-se
         </button>
       </Link>
-      <p data-testid="common_login__element-invalid-email"> a definir</p>
+      {
+        (failedTryLogin)
+          ? (
+            <p data-testid="common_login__element-invalid-email">
+              {
+                `O endereço de e-mail ou a senha não estão corretos.
+                    Por favor, tente novamente.`
+              }
+            </p>
+          )
+          : null
+      }
     </form>
   );
 }
