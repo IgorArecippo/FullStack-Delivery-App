@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { requestLogin, setToken } from '../services/requests';
 
 export default function Login() {
+  const history = useHistory();
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [btnDisabled, setDisabled] = useState(true);
@@ -27,7 +29,6 @@ export default function Login() {
 
     try {
       const { token } = await requestLogin('/login', { email, password });
-
       setToken(token);
 
       // const { role } = await requestData('/login/role', { email, password });
@@ -36,6 +37,7 @@ export default function Login() {
       // localStorage.setItem('role', role);
 
       // setIsLogged(true);
+      history.push('/customer/products');
     } catch (error) {
       setFailedTryLogin(true);
       // setIsLogged(false);
@@ -66,7 +68,7 @@ export default function Login() {
         placeholder="Password"
         onChange={ ({ target }) => handleChange(target.value, setPassword) }
       />
-      <Link to="/produtos">
+      <div>
         <button
           type="button"
           data-testid="common_login__button-login"
@@ -75,8 +77,8 @@ export default function Login() {
         >
           Login
         </button>
-      </Link>
-      <Link to="/cadatro">
+      </div>
+      <Link to="/register">
         <button
           type="button"
           data-testid="common_login__button-register"
@@ -100,3 +102,9 @@ export default function Login() {
     </form>
   );
 }
+
+Login.propTypes = {
+  history: PropTypes.shape({
+    push: PropTypes.func,
+  }).isRequired,
+};

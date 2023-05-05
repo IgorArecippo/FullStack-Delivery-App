@@ -14,9 +14,9 @@ const findByEmail = async (email) => {
 
 const login = async (email, password) => {
   const user = await findByEmail(email);
-  if (!user) throw customError(errorStatus.INVALID_FIELDS, errorMessages.INVALID_FIELDS);
+  if (!user) throw customError(errorStatus.NOT_FOUND, errorMessages.NOT_FOUND);
   const userPassword = md5(password) === user.password;
-  if (!userPassword) throw customError(errorStatus.NOT_FOUND, errorMessages.INVALID_FIELDS);
+  if (!userPassword) throw customError(errorStatus.INVALID_FIELDS, errorMessages.INVALID_FIELDS);
   const token = newToken(user);
   return { token, role: user.role, name: user.name };
 };
