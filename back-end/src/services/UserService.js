@@ -4,12 +4,21 @@ const { newToken } = require('../utils/authenticator');
 const { customError, errorMessages, errorStatus } = require('../utils/erros');
 
 const findByEmail = async (email) => {
-    const user = await User.findOne({
-       where: { 
-        email,
-      },
-      });
-    return user;
+  const user = await User.findOne({
+    where: {
+      email,
+    },
+  });
+  return user;
+};
+
+const findByName = async (name) => {
+  const user = await User.findOne({
+    where: {
+      name,
+    },
+  });
+  return user;
 };
 
 const login = async (email, password) => {
@@ -21,6 +30,25 @@ const login = async (email, password) => {
   return { token, role: user.role, name: user.name };
 };
 
+const register = async (email, password, name) => {
+  const all = await User.findAll();
+  console.log(all);
+  const findEmail = await findByEmail(email);
+  const findName = await findByName(name);
+  if (findEmail || findName) {
+    throw customError(errorStatus.CONFLICT, errorMessages.CONFLICT);
+  }
+  const passwordHash = md5(password);
+  const role = 'customer';
+  const infoUser = { name, email, password: passwordHash, role };
+  console.log(passwordHash);
+  const newUser = await User.create(infoUser);
+  console.log(newUser);
+  const token = newToken(newUser);
+  return { token, role: newUser.role, name: newUser.name };
+};
+
 module.exports = {
   login,
+  register,
 };
