@@ -3,9 +3,14 @@ import PropTypes from 'prop-types';
 import deliveryContext from './deliveryContext';
 
 function Provider({ children }) {
-  const [test] = useState('test');
+  const [results, setResults] = useState([]);
+
+  const context = useMemo(() => ({
+    results,
+    setResults,
+  }), [results]);
   return (
-    <deliveryContext.Provider value={ test }>
+    <deliveryContext.Provider value={ context }>
       { children }
     </deliveryContext.Provider>
   );

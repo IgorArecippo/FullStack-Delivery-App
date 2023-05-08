@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { requestLogin, setToken } from '../services/requests';
+import { requestRegister, setToken } from '../services/requests';
 
 export default function Register() {
   const history = useHistory();
@@ -31,7 +31,7 @@ export default function Register() {
     event.preventDefault();
 
     try {
-      const { token } = await requestLogin('/register', { name, email, password });
+      const { token } = await requestRegister('/register', { name, email, password });
       setToken(token);
 
       localStorage.setItem('token', token);

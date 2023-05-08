@@ -5,9 +5,9 @@ module.exports = (sequelize, DataTypes) => {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     name: { type: DataTypes.STRING, unique: true },
     price: DataTypes.DECIMAL(4, 2),
-    urlImage: DataTypes.STRING,
+    urlImage: { type: DataTypes.STRING },
   },
-  { underscored: true, timestamps: false, tableName: 'products' },
+  { underscored: false, timestamps: false, tableName: 'products' },
 );
 
   return Products;

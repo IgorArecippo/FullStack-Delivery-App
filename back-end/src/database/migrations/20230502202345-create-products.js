@@ -14,10 +14,8 @@ module.exports = {
       },
       price: { type: Sequelize.DECIMAL(4, 2), allowNull: false },
       urlImage: {
-        type: Sequelize.STRING(200),
-        allowNull: false,
-        defaultValue: '' },
-    });
+        type: Sequelize.STRING,
+        allowNull: false } });
   },
 
   async down(queryInterface, _Sequelize) {
