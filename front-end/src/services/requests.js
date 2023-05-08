@@ -3,8 +3,8 @@ import axios from 'axios';
 const api = axios.create({
   baseURL: 'http://localhost:3001' });
 
-export const setToken = (token) => {
-  api.defaults.headers.common.Authorization = token;
+export const setLocalStorage = (email, name, role, token) => {
+  api.defaults.headers.common.Authorization = { email, name, role, token };
 };
 
 export const requestData = async (endpoint) => {

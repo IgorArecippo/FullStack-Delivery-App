@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+/* eslint-disable max-lines-per-function */
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('products', {
@@ -12,10 +14,12 @@ module.exports = {
         allowNull: false,
         unique: true,
       },
-      price: { type: Sequelize.DECIMAL(4, 2), allowNull: false },
-      urlImage: {
-        type: Sequelize.STRING,
-        allowNull: false } });
+      price: { 
+        type: Sequelize.DECIMAL(4, 2), 
+        allowNull: false,
+      },
+      url_image: Sequelize.STRING,
+      });
   },
 
   async down(queryInterface, _Sequelize) {

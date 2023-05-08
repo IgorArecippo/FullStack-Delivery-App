@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { requestLogin, setToken } from '../services/requests';
+import { requestLogin, setLocalStorage } from '../services/requests';
 
 export default function Login() {
   const history = useHistory();
@@ -29,12 +29,11 @@ export default function Login() {
 
     try {
       const { token } = await requestLogin('/login', { email, password });
-      setToken(token);
+      setLocalStorage(token);
 
       // const { role } = await requestData('/login/role', { email, password });
 
       localStorage.setItem('token', token);
-      // localStorage.setItem('role', role);
 
       // setIsLogged(true);
       history.push('/customer/products');

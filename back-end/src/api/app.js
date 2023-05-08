@@ -7,6 +7,7 @@ const routeProduct = require('../routes/Product.Routes');
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use(express.static('public'));
 app.use('/login', routeUser);
 app.use('/register', routeRegister);
 app.use('/customer', routeProduct);

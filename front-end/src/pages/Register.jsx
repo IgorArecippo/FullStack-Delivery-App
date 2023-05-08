@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { requestRegister, setToken } from '../services/requests';
+import { requestRegister, setLocalStorage } from '../services/requests';
 
 export default function Register() {
   const history = useHistory();
@@ -31,10 +31,14 @@ export default function Register() {
     event.preventDefault();
 
     try {
-      const { token } = await requestRegister('/register', { name, email, password });
-      setToken(token);
+      const data = await requestRegister('/register', { email, name, password });
+      const { role, token } = data;
+      setLocalStorage(role, token);
 
       localStorage.setItem('token', token);
+      localStorage.setItem('email', email);
+      localStorage.setItem('name', name);
+      localStorage.setItem('role', role);
 
       history.push('/customer/products');
     } catch (error) {
