@@ -4,11 +4,14 @@ import deliveryContext from './deliveryContext';
 
 function Provider({ children }) {
   const [results, setResults] = useState([]);
+  const [carrinho, setCarrinho] = useState([]);
 
   const context = useMemo(() => ({
     results,
     setResults,
-  }), [results]);
+    carrinho,
+    setCarrinho,
+  }), [results, carrinho]);
   return (
     <deliveryContext.Provider value={ context }>
       { children }

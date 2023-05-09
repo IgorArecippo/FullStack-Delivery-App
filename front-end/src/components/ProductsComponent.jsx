@@ -1,13 +1,13 @@
 import React, { useEffect, useContext, useState } from 'react';
 import DeliveryContext from '../contextAPI/deliveryContext';
-import { requestData } from '../services/requests';
+import { requestData, setLocalStorage } from '../services/requests';
 
 function Products() {
-  // const [results, setResults] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const {
     results,
     setResults,
+    carrinho, setCarrinho,
   } = useContext(DeliveryContext);
   const onze = 11;
   const resultsMap = results.slice(0, onze);
@@ -15,11 +15,72 @@ function Products() {
   useEffect(() => {
     const featchAll = async () => {
       const data = await requestData('/customer/products');
-      setResults(data);
+      const quantidade = data.map((prod) => {
+        prod.quantidade = 0;
+        return prod;
+      });
+      setResults(quantidade);
     };
     featchAll();
     setIsLoading(false);
   }, [setResults]);
+
+  const addItem = (event) => {
+    const prodId = Number(event.target.id);
+    const resultado = results.find((item) => Number(item.id) === prodId); // produto em objeto
+    const produtoNoCarrinho = carrinho.find((item) => Number(item.id) === prodId); // checa se existe o produto no carrinho
+    if (produtoNoCarrinho) {
+      const novo = carrinho;
+      novo.map((p) => {
+        if (Number(p.id) === prodId) {
+          p.quantidade += 1;
+          return p;
+        }
+        return p;
+      });
+      setCarrinho(novo);
+      setLocalStorage('Carrinho', novo);
+    }
+
+    if (!produtoNoCarrinho) {
+      resultado.quantidade = 1;
+      const novo = carrinho;
+      novo.push(resultado);
+      setCarrinho(novo);
+      setLocalStorage('Carrinho', novo);
+    }
+  };
+
+  const removeItem = (event) => {
+    const prodId = Number(event.target.id);
+    // const resultado = results.find((item) => Number(item.id) === prodId); // produto em objeto
+    const produtoNoCarrinho = carrinho.find((item) => Number(item.id) === prodId); // checa se existe o produto no carrinho
+    // console.log(produtoNoCarrinho, ' prodcarrinho');
+
+    if (!produtoNoCarrinho) {
+      return console.log('zerou');
+    }
+
+    if (produtoNoCarrinho.quantidade === 1) {
+      const novo = carrinho.filter((item) => item.id !== prodId);
+      // novo.filter((item) => item.id !== prodId);
+      setCarrinho(novo);
+      setLocalStorage('Carrinho', novo);
+    }
+
+    if (produtoNoCarrinho.quantidade !== 1) {
+      const novo = carrinho;
+      novo.map((p) => {
+        if (Number(p.id) === prodId) {
+          p.quantidade -= 1;
+          return p;
+        }
+        return p;
+      });
+      setCarrinho(novo);
+      setLocalStorage('Carrinho', novo);
+    }
+  };
 
   return (
     <div>
@@ -29,26 +90,48 @@ function Products() {
           : (
             <div>
               {
-                resultsMap.map((result) => (
-                  <div key={ result.id }>
+                resultsMap.map((res) => (
+                  <div key={ res.id }>
                     <p
                       className="product-price"
-                      data-testid={ `customer_products__element-card-price-${result.id}` }
+                      data-testid={ `customer_products__element-card-price-${res.id}` }
                     >
-                      {result.price}
+                      {res.price}
                     </p>
                     <img
                       className="img-Products"
-                      data-testid={ `ustomer_products__img-card-bg-image-${result.id}` }
-                      src={ result.urlImage }
-                      alt={ result.name }
+                      data-testid={ `ustomer_products__img-card-bg-image-${res.id}` }
+                      src={ res.urlImage }
+                      alt={ res.name }
                     />
                     <p
                       className="product-name"
-                      data-testid={ `customer_products__element-card-title-${result.id}` }
+                      data-testid={ `customer_products__element-card-title-${res.id}` }
                     >
-                      {result.name}
+                      {res.name}
                     </p>
+                    <button
+                      type="button"
+                      id={ res.id }
+                      data-testid={ `customer_products__button-card-rm-item-${res.id}` }
+                      onClick={ removeItem }
+                    >
+                      -
+                    </button>
+                    {/* <input
+                      type="number"
+                      // onChange={ handleInput }
+                      data-testid={ `customer_products__input-card-quantity-${res.id}` }
+                      defaultValue={ res.quantidade }
+                    /> */}
+                    <button
+                      type="button"
+                      data-testid={ `customer_products__button-card-add-item-${res.id}` }
+                      id={ res.id }
+                      onClick={ addItem }
+                    >
+                      +
+                    </button>
                   </div>
                 ))
               }
