@@ -25,6 +25,17 @@ function Products() {
     setIsLoading(false);
   }, [setResults]);
 
+  const decreasesQuantidade = (id, state) => {
+    state.map((p) => {
+      if (Number(p.id) === id) {
+        p.quantidade -= 1;
+        return p;
+      }
+      return p;
+    });
+    return state;
+  };
+
   const addItem = (event) => {
     const prodId = Number(event.target.id);
     const resultado = results.find((item) => Number(item.id) === prodId); // produto em objeto
@@ -53,22 +64,24 @@ function Products() {
 
   const removeItem = (event) => {
     const prodId = Number(event.target.id);
-    // const resultado = results.find((item) => Number(item.id) === prodId); // produto em objeto
+
     const produtoNoCarrinho = carrinho.find((item) => Number(item.id) === prodId); // checa se existe o produto no carrinho
-    // console.log(produtoNoCarrinho, ' prodcarrinho');
 
     if (!produtoNoCarrinho) {
       return console.log('zerou');
     }
 
-    if (produtoNoCarrinho.quantidade === 1) {
+    const newArrayProducts = decreasesQuantidade(prodId, results);
+    setResults(newArrayProducts);
+
+    if (produtoNoCarrinho.quantidade === 0) {
       const novo = carrinho.filter((item) => item.id !== prodId);
-      // novo.filter((item) => item.id !== prodId);
+
       setCarrinho(novo);
       setLocalStorage('Carrinho', novo);
     }
 
-    if (produtoNoCarrinho.quantidade !== 1) {
+    if (produtoNoCarrinho.quantidade > 1) {
       const novo = carrinho;
       novo.map((p) => {
         if (Number(p.id) === prodId) {
@@ -96,11 +109,11 @@ function Products() {
                       className="product-price"
                       data-testid={ `customer_products__element-card-price-${res.id}` }
                     >
-                      {res.price}
+                      { `${res.price.replace(/\./, ',')}` }
                     </p>
                     <img
                       className="img-Products"
-                      data-testid={ `ustomer_products__img-card-bg-image-${res.id}` }
+                      data-testid={ `customer_products__img-card-bg-image-${res.id}` }
                       src={ res.urlImage }
                       alt={ res.name }
                     />
@@ -118,12 +131,12 @@ function Products() {
                     >
                       -
                     </button>
-                    {/* <input
+                    <input
                       type="number"
                       // onChange={ handleInput }
                       data-testid={ `customer_products__input-card-quantity-${res.id}` }
                       defaultValue={ res.quantidade }
-                    /> */}
+                    />
                     <button
                       type="button"
                       data-testid={ `customer_products__button-card-add-item-${res.id}` }

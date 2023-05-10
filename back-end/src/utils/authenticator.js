@@ -1,6 +1,10 @@
 const jwt = require('jsonwebtoken');
+const path = require('path');
+const fs = require('fs');
 
-const secret = process.env.JWT_SECRET || 'secret';
+const file = path.resolve(__dirname, '../../jwt.evaluation.key');
+
+const secret = fs.readFileSync(file, 'utf8');
 
 const JWT_CONFIG = {
   algorithm: 'HS256',

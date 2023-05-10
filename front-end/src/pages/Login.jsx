@@ -8,7 +8,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [btnDisabled, setDisabled] = useState(true);
-  // const [isLogged, setIsLogged] = useState(false);
+
   const [failedTryLogin, setFailedTryLogin] = useState(false);
 
   useEffect(() => {
@@ -28,29 +28,20 @@ export default function Login() {
     event.preventDefault();
 
     try {
-      const { token } = await requestLogin('/login', { email, password });
+      const { token, name, role } = await requestLogin('/login', { email, password });
       setLocalStorage(token);
 
-      // const { role } = await requestData('/login/role', { email, password });
+      localStorage.setItem('user', JSON.stringify({ token, email, name, role }));
 
-      localStorage.setItem('token', token);
-
-      // setIsLogged(true);
       history.push('/customer/products');
     } catch (error) {
       setFailedTryLogin(true);
-      // setIsLogged(false);
     }
   };
 
   const handleChange = (value, setValue) => {
     setValue(value);
   };
-
-  // const handleClick = () => {
-  //   const user = { email };
-  //   localStorage.setItem('user', JSON.stringify(user));
-  // };
 
   return (
     <form>

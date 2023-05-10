@@ -35,10 +35,9 @@ export default function Register() {
       const { role, token } = data;
       setLocalStorage(role, token);
 
-      localStorage.setItem('token', token);
-      localStorage.setItem('email', email);
-      localStorage.setItem('name', name);
-      localStorage.setItem('role', role);
+      localStorage.setItem('user', JSON.stringify({
+        token, email, name, role: 'customer',
+      }));
 
       history.push('/customer/products');
     } catch (error) {

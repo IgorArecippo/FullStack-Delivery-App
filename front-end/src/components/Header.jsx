@@ -1,8 +1,16 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 function Header() {
-  const name = localStorage.getItem('name');
+  const { name } = JSON.parse(localStorage.getItem('user'));
+
+  const history = useHistory();
+
+  const cleanLocalStorage = () => {
+    localStorage.removeItem('user');
+    history.push('/login');
+  };
+
   return (
     <header className="header">
       <Link to="/customer/products">
@@ -19,14 +27,14 @@ function Header() {
           MEUS PEDIDOS
         </h3>
       </Link>
-      <h2 data-testid="customer_products__element-navbar-user-full-name">{name}</h2>
-      <Link to="/login">
-        <h3
-          data-testid="customer_products__element-navbar-link-logout"
-        >
-          Sair
-        </h3>
-      </Link>
+      <h2 data-testid="customer_products__element-navbar-user-full-name">{ name }</h2>
+      <button
+        type="button"
+        onClick={ cleanLocalStorage }
+        data-testid="customer_products__element-navbar-link-logout"
+      >
+        Sair
+      </button>
     </header>
   );
 }
