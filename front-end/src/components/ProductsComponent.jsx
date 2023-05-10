@@ -1,9 +1,13 @@
 import React, { useEffect, useContext, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import DeliveryContext from '../contextAPI/deliveryContext';
-import { requestData, setLocalStorage } from '../services/requests';
+import { requestData } from '../services/requests';
 
 function Products() {
+  const history = useHistory();
   const [isLoading, setIsLoading] = useState(true);
+  const [totalPrice, setTotalPrice] = useState(0);
+
   const {
     results,
     setResults,
@@ -23,7 +27,7 @@ function Products() {
     };
     featchAll();
     setIsLoading(false);
-  }, [setResults]);
+  }, [setResults, totalPrice]);
 
   const decreasesQuantidade = (id, state) => {
     state.map((p) => {
@@ -34,6 +38,17 @@ function Products() {
       return p;
     });
     return state;
+  };
+
+  const calculator = () => {
+    let valor = 0;
+    if (carrinho.length === 0) {
+      return setTotalPrice(0);
+    }
+    carrinho.forEach((produto) => {
+      valor += Number(produto.price) * Number(produto.quantidade);
+      return setTotalPrice(valor);
+    });
   };
 
   const addItem = (event) => {
@@ -50,7 +65,7 @@ function Products() {
         return p;
       });
       setCarrinho(novo);
-      setLocalStorage('Carrinho', novo);
+      localStorage.setItem('carrinho', JSON.stringify(novo));
     }
 
     if (!produtoNoCarrinho) {
@@ -58,27 +73,30 @@ function Products() {
       const novo = carrinho;
       novo.push(resultado);
       setCarrinho(novo);
-      setLocalStorage('Carrinho', novo);
+      localStorage.setItem('carrinho', JSON.stringify({ novo }));
     }
+    calculator();
   };
 
   const removeItem = (event) => {
     const prodId = Number(event.target.id);
 
     const produtoNoCarrinho = carrinho.find((item) => Number(item.id) === prodId); // checa se existe o produto no carrinho
+    calculator();
 
     if (!produtoNoCarrinho) {
-      return console.log('zerou');
+      return null;
     }
 
     const newArrayProducts = decreasesQuantidade(prodId, results);
     setResults(newArrayProducts);
 
-    if (produtoNoCarrinho.quantidade === 0) {
+    if (produtoNoCarrinho.quantidade === 1) {
       const novo = carrinho.filter((item) => item.id !== prodId);
 
       setCarrinho(novo);
-      setLocalStorage('Carrinho', novo);
+      localStorage.setItem('carrinho', JSON.stringify({ novo }));
+      calculator();
     }
 
     if (produtoNoCarrinho.quantidade > 1) {
@@ -91,8 +109,43 @@ function Products() {
         return p;
       });
       setCarrinho(novo);
-      setLocalStorage('Carrinho', novo);
+      localStorage.setItem('carrinho', JSON.stringify({ novo }));
+      calculator();
     }
+    if (carrinho.length === 0) {
+      console.log('sera q entrou hm');
+      setTotalPrice(0);
+    }
+  };
+
+  const handleInput = (event) => {
+    const prodId = Number(event.target.id);
+    const { value } = Number(event.target);
+    const newLittleCar = carrinho;
+
+    if (value < 1) {
+      newLittleCar.filter((p) => p.id !== prodId);
+      return setCarrinho(newLittleCar);
+    }
+
+    const produtoNoCarrinho = carrinho.find((item) => Number(item.id) === prodId);
+    if (!produtoNoCarrinho) {
+      const resultado = results.find((item) => Number(item.id) === prodId);
+      newLittleCar.push(resultado);
+    }
+    newLittleCar.map((p) => {
+      if (Number(p.id) === prodId) {
+        p.quantidade = value;
+        return p;
+      }
+      return p;
+    });
+    setCarrinho(newLittleCar);
+    localStorage.setItem('carrinho', JSON.stringify(newLittleCar));
+  };
+
+  const buttonCarrinho = () => {
+    history.push('/customer/checkout');
   };
 
   return (
@@ -133,9 +186,10 @@ function Products() {
                     </button>
                     <input
                       type="number"
-                      // onChange={ handleInput }
+                      onChange={ handleInput }
+                      id={ res.id }
                       data-testid={ `customer_products__input-card-quantity-${res.id}` }
-                      defaultValue={ res.quantidade }
+                      value={ res.quantidade }
                     />
                     <button
                       type="button"
@@ -151,6 +205,14 @@ function Products() {
             </div>
           )}
       </div>
+      <button
+        type="button"
+        data-testid="customer_products__button-cart"
+        onClick={ buttonCarrinho }
+      >
+        {`Ver carrinho: R$${totalPrice.toFixed(2)}`}
+
+      </button>
     </div>
   );
 }
