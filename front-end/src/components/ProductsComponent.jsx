@@ -206,6 +206,7 @@ function Products() {
           )}
       </div>
       <button
+        className="total-button"
         type="button"
         data-testid="customer_products__button-cart"
         onClick={ buttonCarrinho }

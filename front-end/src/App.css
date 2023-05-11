@@ -55,8 +55,16 @@
 
 .img-Products {
   height: 357px;
-  width: 375.8941650390625px;
+  width: 329px;
   left: 1.052734375px;
   top: 2px;
-  border-radius: 0px;  
+  border-radius: 0px;
+}
+
+.total-button {
+  height: 25px;
+  width: 190px;
+  border-radius: 6px;
+  background-color: #0fa36b;
+  border-style:groove;
 }
