@@ -13,40 +13,32 @@ function Products() {
     setResults,
     carrinho, setCarrinho,
   } = useContext(DeliveryContext);
-  const onze = 11;
-  const resultsMap = results.slice(0, onze);
+  // const onze = 11;
+  // const resultsMap = results.slice(0, onze);
 
   const calculator = () => {
     let valor = 0;
     const copyCarrinho = carrinho;
     copyCarrinho.forEach((produto) => {
       valor += Number(produto.price) * Number(produto.quantidade);
+      localStorage.setItem('totalPrice', JSON.stringify(valor));
       return setTotalPrice(valor);
     });
   };
 
-  // const verifyLocalStorage = () => {
-  //   const carrinhoSaved = JSON.parse(localStorage.getItem('carrinho'));
-  //   if (carrinhoSaved) {
-  //     console.log('caiu aqui');
-  //     setCarrinho(carrinhoSaved);
-  //     const copyResults = results;
-  //     const newResults = copyResults.map((p) => {
-  //       const product = carrinhoSaved.find((pSaved) => pSaved.id === p.id);
-  //       console.log(product);
-  //       if (product) {
-  //         return product;
-  //       }
-  //       return p;
-  //     });
-  //     setResults(newResults);
-  //     console.log(copyResults);
-  //     console.log(newResults);
-  //   }
-  //   if (!carrinhoSaved) setCarrinho([]);
-  //   calculator();
-  //   console.log(carrinhoSaved);
-  // };
+  const verifyLocalStorage = () => {
+    const carrinhoSaved = JSON.parse(localStorage.getItem('carrinho'));
+    const resultsSaved = JSON.parse(localStorage.getItem('results'));
+    const priceSaved = JSON.parse(localStorage.getItem('totalPrice'));
+    if (carrinhoSaved) {
+      setCarrinho(carrinhoSaved);
+      console.log('carrinho', carrinhoSaved);
+      setResults(resultsSaved);
+      console.log('results', resultsSaved);
+      setTotalPrice(priceSaved);
+      calculator();
+    }
+  };
 
   useEffect(() => {
     const featchAll = async () => {
@@ -56,10 +48,12 @@ function Products() {
         return prod;
       });
       setResults(quantidade);
+      verifyLocalStorage();
+      calculator();
     };
     featchAll();
-    // verifyLocalStorage();
     setIsLoading(false);
+    console.log('infinito');
   }, []);
 
   const increaseQuantidade = (id, state) => {
@@ -80,12 +74,14 @@ function Products() {
       const newCarrinho = increaseQuantidade(id, copyCarrinho);
       setCarrinho(newCarrinho);
       localStorage.setItem('carrinho', JSON.stringify(newCarrinho));
+      localStorage.setItem('results', JSON.stringify(results));
     } else {
       const product = results.find((p) => p.id === id);
       product.quantidade = 1;
       copyCarrinho.push(product);
       setCarrinho(copyCarrinho);
       localStorage.setItem('carrinho', JSON.stringify(copyCarrinho));
+      localStorage.setItem('results', JSON.stringify(results));
     }
   };
 
@@ -114,6 +110,7 @@ function Products() {
       const newCarrinho = copyCarrinho.filter((p) => p.id !== id);
       setCarrinho(newCarrinho);
       localStorage.setItem('carrinho', JSON.stringify(newCarrinho));
+      localStorage.setItem('results', JSON.stringify(results));
       const copyResults = results;
       const newResults = decreasesQuantidade(id, copyResults);
       setResults(newResults);
@@ -121,10 +118,11 @@ function Products() {
       const newCarrinho = decreasesQuantidade(id, copyCarrinho);
       setCarrinho(newCarrinho);
       localStorage.setItem('carrinho', JSON.stringify(newCarrinho));
+      localStorage.setItem('results', JSON.stringify(results));
     }
   };
 
-  const removeItem2 = ({ target }) => {
+  const removeItem = ({ target }) => {
     const id = Number(target.id);
     verifyCarrinhoRemove(id);
     calculator();
@@ -168,7 +166,7 @@ function Products() {
           : (
             <div>
               {
-                resultsMap.map((res) => (
+                results.map((res) => (
                   <div key={ res.id }>
                     <p
                       className="product-price"
@@ -192,7 +190,7 @@ function Products() {
                       type="button"
                       id={ res.id }
                       data-testid={ `customer_products__button-card-rm-item-${res.id}` }
-                      onClick={ removeItem2 }
+                      onClick={ removeItem }
                     >
                       -
                     </button>
