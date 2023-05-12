@@ -16,6 +16,38 @@ function Products() {
   const onze = 11;
   const resultsMap = results.slice(0, onze);
 
+  const calculator = () => {
+    let valor = 0;
+    const copyCarrinho = carrinho;
+    copyCarrinho.forEach((produto) => {
+      valor += Number(produto.price) * Number(produto.quantidade);
+      return setTotalPrice(valor);
+    });
+  };
+
+  // const verifyLocalStorage = () => {
+  //   const carrinhoSaved = JSON.parse(localStorage.getItem('carrinho'));
+  //   if (carrinhoSaved) {
+  //     console.log('caiu aqui');
+  //     setCarrinho(carrinhoSaved);
+  //     const copyResults = results;
+  //     const newResults = copyResults.map((p) => {
+  //       const product = carrinhoSaved.find((pSaved) => pSaved.id === p.id);
+  //       console.log(product);
+  //       if (product) {
+  //         return product;
+  //       }
+  //       return p;
+  //     });
+  //     setResults(newResults);
+  //     console.log(copyResults);
+  //     console.log(newResults);
+  //   }
+  //   if (!carrinhoSaved) setCarrinho([]);
+  //   calculator();
+  //   console.log(carrinhoSaved);
+  // };
+
   useEffect(() => {
     const featchAll = async () => {
       const data = await requestData('/customer/products');
@@ -25,10 +57,43 @@ function Products() {
       });
       setResults(quantidade);
     };
-    console.log('teste se chama');
     featchAll();
+    // verifyLocalStorage();
     setIsLoading(false);
   }, []);
+
+  const increaseQuantidade = (id, state) => {
+    state.map((p) => {
+      if (p.id === id) {
+        p.quantidade += 1;
+        return p;
+      }
+      return p;
+    });
+    return state;
+  };
+
+  const verifyCarrinhoAdd = (id) => {
+    const copyCarrinho = carrinho;
+    const verify = copyCarrinho.find((p) => p.id === id);
+    if (verify) {
+      const newCarrinho = increaseQuantidade(id, copyCarrinho);
+      setCarrinho(newCarrinho);
+      localStorage.setItem('carrinho', JSON.stringify(newCarrinho));
+    } else {
+      const product = results.find((p) => p.id === id);
+      product.quantidade = 1;
+      copyCarrinho.push(product);
+      setCarrinho(copyCarrinho);
+      localStorage.setItem('carrinho', JSON.stringify(copyCarrinho));
+    }
+  };
+
+  const addItem = ({ target }) => {
+    const id = Number(target.id);
+    verifyCarrinhoAdd(id);
+    calculator();
+  };
 
   const decreasesQuantidade = (id, state) => {
     state.map((p) => {
@@ -41,86 +106,28 @@ function Products() {
     return state;
   };
 
-  const addQuantidade = (id, state) => {
-    state.map((p) => {
-      if (p.id === id) {
-        p.quantidade += 1;
-        return p;
-      }
-      return p;
-    });
-    return state;
-  };
-
-  const calculator = () => {
-    let valor = 0;
-    if (carrinho.length === 0) {
-      return setTotalPrice(0);
-    }
-    carrinho.forEach((produto) => {
-      valor += Number(produto.price) * Number(produto.quantidade);
-      return setTotalPrice(valor);
-    });
-  };
-
-  const verifyCarrinho = (id) => {
+  const verifyCarrinhoRemove = (id) => {
     const copyCarrinho = carrinho;
-    const verify = copyCarrinho.find((p) => p.id === id);
-    if (verify) {
-      const newCarrinho = addQuantidade(id, copyCarrinho);
+    const getProduct = copyCarrinho.find((p) => p.id === id);
+    if (!getProduct) return null; // para não quebrar ao tentar diminuir um produto inexistente no carrinho.
+    if (getProduct.quantidade === 1) {
+      const newCarrinho = copyCarrinho.filter((p) => p.id !== id);
       setCarrinho(newCarrinho);
+      localStorage.setItem('carrinho', JSON.stringify(newCarrinho));
+      const copyResults = results;
+      const newResults = decreasesQuantidade(id, copyResults);
+      setResults(newResults);
     } else {
-      const product = results.find((p) => p.id === id);
-      product.quantidade = 1;
-      copyCarrinho.push(product);
-      setCarrinho(copyCarrinho);
+      const newCarrinho = decreasesQuantidade(id, copyCarrinho);
+      setCarrinho(newCarrinho);
+      localStorage.setItem('carrinho', JSON.stringify(newCarrinho));
     }
   };
 
-  const addItem = ({ target }) => {
+  const removeItem2 = ({ target }) => {
     const id = Number(target.id);
-    verifyCarrinho(id);
+    verifyCarrinhoRemove(id);
     calculator();
-  };
-
-  const removeItem = (event) => {
-    const prodId = Number(event.target.id);
-
-    const produtoNoCarrinho = carrinho.find((item) => Number(item.id) === prodId); // checa se existe o produto no carrinho
-    calculator();
-
-    if (!produtoNoCarrinho) {
-      return null;
-    }
-
-    const newArrayProducts = decreasesQuantidade(prodId, results);
-    setResults(newArrayProducts);
-
-    if (produtoNoCarrinho.quantidade === 1) {
-      const novo = carrinho.filter((item) => item.id !== prodId);
-
-      setCarrinho(novo);
-      localStorage.setItem('carrinho', JSON.stringify({ novo }));
-      calculator();
-    }
-
-    if (produtoNoCarrinho.quantidade > 1) {
-      const novo = carrinho;
-      novo.map((p) => {
-        if (Number(p.id) === prodId) {
-          p.quantidade -= 1;
-          return p;
-        }
-        return p;
-      });
-      setCarrinho(novo);
-      localStorage.setItem('carrinho', JSON.stringify({ novo }));
-      calculator();
-    }
-    if (carrinho.length === 0) {
-      console.log('sera q entrou hm');
-      setTotalPrice(0);
-    }
   };
 
   const handleInput = (event) => {
@@ -185,7 +192,7 @@ function Products() {
                       type="button"
                       id={ res.id }
                       data-testid={ `customer_products__button-card-rm-item-${res.id}` }
-                      onClick={ removeItem }
+                      onClick={ removeItem2 }
                     >
                       -
                     </button>
