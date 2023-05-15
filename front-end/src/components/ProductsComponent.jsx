@@ -6,12 +6,13 @@ import { requestData } from '../services/requests';
 function Products() {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(true);
-  const [totalPrice, setTotalPrice] = useState(0);
+  // const [totalPrice, setTotalPrice] = useState(0);
 
   const {
     results,
     setResults,
     carrinho, setCarrinho,
+    totalPrice, setTotalPrice,
   } = useContext(DeliveryContext);
   // const onze = 11;
   // const resultsMap = results.slice(0, onze);
@@ -48,7 +49,7 @@ function Products() {
         return prod;
       });
       setResults(quantidade);
-      verifyLocalStorage();
+      // verifyLocalStorage();
       calculator();
     };
     featchAll();

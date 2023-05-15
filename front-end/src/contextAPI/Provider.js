@@ -5,13 +5,16 @@ import deliveryContext from './deliveryContext';
 function Provider({ children }) {
   const [results, setResults] = useState([]);
   const [carrinho, setCarrinho] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
 
   const context = useMemo(() => ({
     results,
     setResults,
     carrinho,
     setCarrinho,
-  }), [results, carrinho]);
+    totalPrice,
+    setTotalPrice,
+  }), [results, carrinho, totalPrice]);
   return (
     <deliveryContext.Provider value={ context }>
       { children }
