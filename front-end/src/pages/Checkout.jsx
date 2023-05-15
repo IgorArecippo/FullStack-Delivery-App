@@ -9,8 +9,14 @@ function Checkout() {
   const history = useHistory();
 
   const deleteSingleItem = (id) => {
-    // const id = Number(target.id);
     const returnCarrinho = carrinho.filter((p) => p.id !== id);
+    const productPrice = returnCarrinho.map((p) => Number(p.price * p.quantidade));
+    if (carrinho.length > 1) {
+      const newPrice = productPrice.reduce((acc, curr) => Number(acc) + Number(curr));
+      setTotalPrice(newPrice);
+    } else {
+      setTotalPrice(0);
+    }
     setCarrinho(returnCarrinho);
   };
 
@@ -72,9 +78,13 @@ function Checkout() {
       <h3 data-testid="customer_checkout__element-order-total-price">{`Total: R$${totalPrice.toFixed(2).replace(/\./, ',')}`}</h3>
       <form>
         <h3>Detalhes e Endereço para Entrega</h3>
-        <label htmlFor="vendedor" data-testid="customer_checkout__select-seller">
+        <label htmlFor="vendedor">
           P. Vendedora Responsável:
-          <select name="vendedor" id="vendedor">
+          <select
+            name="vendedor"
+            id="vendedor"
+            data-testid="customer_checkout__select-seller"
+          >
             <option value="vendedor1">vendedor1</option>
             <option value="vendedor2">vendedor2</option>
             <option value="vendedor3">vendedor3</option>

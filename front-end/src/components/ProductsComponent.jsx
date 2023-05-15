@@ -27,19 +27,20 @@ function Products() {
     });
   };
 
-  const verifyLocalStorage = () => {
-    const carrinhoSaved = JSON.parse(localStorage.getItem('carrinho'));
-    const resultsSaved = JSON.parse(localStorage.getItem('results'));
-    const priceSaved = JSON.parse(localStorage.getItem('totalPrice'));
-    if (carrinhoSaved) {
-      setCarrinho(carrinhoSaved);
-      console.log('carrinho', carrinhoSaved);
-      setResults(resultsSaved);
-      console.log('results', resultsSaved);
-      setTotalPrice(priceSaved);
-      calculator();
-    }
-  };
+  // const verifyLocalStorage = () => {
+  //   const carrinhoSaved = JSON.parse(localStorage.getItem('carrinho'));
+  //   const resultsSaved = JSON.parse(localStorage.getItem('results'));
+  //   const priceSaved = JSON.parse(localStorage.getItem('totalPrice'));
+  //   if (carrinhoSaved)
+  //  {
+  //     setCarrinho(carrinhoSaved);
+  //     console.log('carrinho', carrinhoSaved);
+  //     setResults(resultsSaved);
+  //     console.log('results', resultsSaved);
+  //     setTotalPrice(priceSaved);
+  //     calculator();
+  //   }
+  // };
 
   useEffect(() => {
     const featchAll = async () => {
@@ -220,10 +221,16 @@ function Products() {
         className="total-button"
         type="button"
         data-testid="customer_products__button-cart"
+        disabled={ carrinho.length === 0 }
         onClick={ buttonCarrinho }
       >
-        {`Ver carrinho: R$${totalPrice.toFixed(2)}`}
-
+        Ver Carrinho: R$
+        {' '}
+        <span
+          data-testid="customer_products__checkout-bottom-value"
+        >
+          { totalPrice.toFixed(2).replace(/\./, ',') }
+        </span>
       </button>
     </div>
   );
