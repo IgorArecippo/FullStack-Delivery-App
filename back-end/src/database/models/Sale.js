@@ -9,16 +9,18 @@ module.exports = (sequelize, DataTypes) => {
       sellerId: { 
         type: DataTypes.INTEGER,
          foreignKey: true },
-      total_price: DataTypes.DECIMAL(9, 2),
-      delivery_address: DataTypes.STRING(100),
-      delivery_number: DataTypes.STRING(50),
-      sale_date: { type: DataTypes.DATE },
+      totalPrice: {
+        type: DataTypes.DECIMAL(9, 2),
+      },
+      deliveryAddress: DataTypes.STRING(100),
+      deliveryNumber: DataTypes.STRING(50),
+      saleDate: { type: DataTypes.DATE },
       status: { type: DataTypes.STRING(50),
     },
-    }, { timestamps: false, underscored: false, tableName: 'sales' });
+    }, { timestamps: false, underscored: true, tableName: 'sales' });
     Sale.associate = (models) => {
-        Sale.belongsTo(models.User, { as: 'user', foreignKey: 'user_id' });
-        Sale.belongsTo(models.User, { as: 'seller', foreignKey: 'seller_id' });
+        Sale.belongsTo(models.User, { as: 'user', foreignKey: 'userId' });
+        Sale.belongsTo(models.User, { as: 'seller', foreignKey: 'sellerId' });
         // Sale.hasMany(models.SalesProducts, { as: 'sale', foreignKey: 'saleId' });
     };
     return Sale;

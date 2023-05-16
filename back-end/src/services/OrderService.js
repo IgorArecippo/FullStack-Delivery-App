@@ -1,5 +1,4 @@
 /* eslint-disable max-lines-per-function */
-/* eslint-disable camelcase */
 const { Sale } = require('../database/models');
 // const { Sale, SalesProducts } = require('../database/models');
 
@@ -13,10 +12,10 @@ const createSale = async (data) => {
     } = data;
     const sale = await Sale.create({ userId,
         sellerId,
-        total_price: totalPrice,
-        delivery_address: deliveryAddress,
-        delivery_number: deliveryNumber,
-        sale_date: new Date(),
+        totalPrice,
+        deliveryAddress,
+        deliveryNumber,
+        saleDate: new Date(),
         status,
     });
 

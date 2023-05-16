@@ -104,7 +104,7 @@ function Checkout() {
           type="text"
           data-testid="customer_checkout__input-address"
           id="address"
-          onChange={ ({ target }) => handleInput(target.value) }
+          onChange={ () => handleInput(target.value) }
         />
         <p>Número</p>
         <input
