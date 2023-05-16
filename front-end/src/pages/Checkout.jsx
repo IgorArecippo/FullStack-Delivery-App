@@ -24,6 +24,15 @@ function Checkout() {
     history.push('/customer/details');
   };
 
+  const handleInput = (event) => {
+    if (event.id === 'address') {
+      localStorage.setItem('Address', event.target);
+    }
+    if (event.id === 'number') {
+      localStorage.setItem('Number', event.target);
+    }
+  };
+
   return (
     <div>
       <Header />
@@ -85,15 +94,25 @@ function Checkout() {
             id="vendedor"
             data-testid="customer_checkout__select-seller"
           >
-            <option value="vendedor1">vendedor1</option>
-            <option value="vendedor2">vendedor2</option>
-            <option value="vendedor3">vendedor3</option>
+            <option value="1">vendedor1</option>
+            <option value="2">vendedor2</option>
+            <option value="3">vendedor3</option>
           </select>
         </label>
         <p>Endereço</p>
-        <input type="text" data-testid="customer_checkout__input-address" />
+        <input
+          type="text"
+          data-testid="customer_checkout__input-address"
+          id="address"
+          onChange={ ({ target }) => handleInput(target.value) }
+        />
         <p>Número</p>
-        <input type="text" data-testid="customer_checkout__input-address-number" />
+        <input
+          type="text"
+          data-testid="customer_checkout__input-address-number"
+          id="number"
+          onChange={ handleInput }
+        />
         <button
           type="button"
           onClick={ buttonDetails }
