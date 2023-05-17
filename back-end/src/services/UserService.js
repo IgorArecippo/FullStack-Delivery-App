@@ -27,7 +27,7 @@ const login = async (email, password) => {
   const userPassword = md5(password) === user.password;
   if (!userPassword) throw customError(errorStatus.INVALID_FIELDS, errorMessages.INVALID_FIELDS);
   const token = newToken(user);
-  return { token, role: user.role, name: user.name };
+  return { token, role: user.role, name: user.name, id: user.id };
 };
 
 const register = async (email, password, name) => {
@@ -45,7 +45,7 @@ const register = async (email, password, name) => {
   const newUser = await User.create(infoUser);
   console.log(newUser);
   const token = newToken(newUser);
-  return { token, role: newUser.role, name: newUser.name };
+  return { token, role: newUser.role, name: newUser.name, id: newUser.id };
 };
 
 module.exports = {

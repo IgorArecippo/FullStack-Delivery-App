@@ -28,10 +28,10 @@ export default function Login() {
     event.preventDefault();
 
     try {
-      const { token, name, role } = await requestLogin('/login', { email, password });
+      const { token, name, role, id } = await requestLogin('/login', { email, password });
       setLocalStorage(token);
 
-      localStorage.setItem('user', JSON.stringify({ token, email, name, role }));
+      localStorage.setItem('user', JSON.stringify({ token, email, name, role, id }));
 
       history.push('/customer/products');
     } catch (error) {

@@ -1,12 +1,22 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import Header from '../components/Header';
 import DeliveryContext from '../contextAPI/deliveryContext';
+import { requestRegister, setLocalStorage } from '../services/requests';
 
 function Checkout() {
-  const { carrinho,
-    totalPrice, setCarrinho, setTotalPrice } = useContext(DeliveryContext);
+  const {
+    carrinho,
+    totalPrice,
+    orders,
+    setCarrinho,
+    setTotalPrice,
+    setOrders,
+  } = useContext(DeliveryContext);
   const history = useHistory();
+  const [sellerId, setSellerId] = useState(1);
+  const [address, setAddress] = useState('');
+  const [deliveryNumber, setDeliveryNumber] = useState('');
 
   const deleteSingleItem = (id) => {
     const returnCarrinho = carrinho.filter((p) => p.id !== id);
@@ -20,17 +30,39 @@ function Checkout() {
     setCarrinho(returnCarrinho);
   };
 
-  const buttonDetails = () => {
-    history.push('/customer/details');
+  const handleInputAddress = (event) => {
+    setAddress(event.target.value);
   };
 
-  const handleInput = (event) => {
-    if (event.id === 'address') {
-      localStorage.setItem('Address', event.target);
-    }
-    if (event.id === 'number') {
-      localStorage.setItem('Number', event.target);
-    }
+  const handleInputNumber = (event) => {
+    setDeliveryNumber(event.target.value);
+  };
+
+  const handleSellerId = (event) => {
+    setSellerId(Number(event.target.value));
+  };
+
+  const handleOrder = () => {
+    const { id } = JSON.parse(localStorage.getItem('user'));
+    const infoOrders = {
+      userId: id,
+      totalPrice,
+      sellerId,
+      deliveryAddress: address,
+      deliveryNumber,
+      status: 'pendente',
+    };
+    setOrders(infoOrders);
+  };
+
+  const finishOrder = async () => {
+    handleOrder();
+    console.log(orders);
+    const saleId = await requestRegister('/customer/orders', orders);
+    console.log(saleId);
+    const { token } = JSON.parse(localStorage.getItem('user'));
+    setLocalStorage(token);
+    history.push(`/customer/orders/${saleId}`);
   };
 
   return (
@@ -93,10 +125,11 @@ function Checkout() {
             name="vendedor"
             id="vendedor"
             data-testid="customer_checkout__select-seller"
+            onChange={ handleSellerId }
           >
-            <option value="1">vendedor1</option>
-            <option value="2">vendedor2</option>
-            <option value="3">vendedor3</option>
+            <option value={ 1 }>vendedor1</option>
+            <option value={ 2 }>vendedor2</option>
+            <option value={ 3 }>vendedor3</option>
           </select>
         </label>
         <p>Endereço</p>
@@ -104,18 +137,18 @@ function Checkout() {
           type="text"
           data-testid="customer_checkout__input-address"
           id="address"
-          onChange={ () => handleInput(target.value) }
+          onChange={ handleInputAddress }
         />
         <p>Número</p>
         <input
           type="text"
           data-testid="customer_checkout__input-address-number"
           id="number"
-          onChange={ handleInput }
+          onChange={ handleInputNumber }
         />
         <button
           type="button"
-          onClick={ buttonDetails }
+          onClick={ finishOrder }
           data-testid="customer_checkout__button-submit-order"
         >
           FINALIZAR PEDIDO

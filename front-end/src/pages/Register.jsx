@@ -32,11 +32,11 @@ export default function Register() {
 
     try {
       const data = await requestRegister('/register', { email, name, password });
-      const { role, token } = data;
+      const { role, token, id } = data;
       setLocalStorage(role, token);
 
       localStorage.setItem('user', JSON.stringify({
-        token, email, name, role: 'customer',
+        token, email, name, role: 'customer', id,
       }));
 
       history.push('/customer/products');
