@@ -7,6 +7,7 @@ function Provider({ children }) {
   const [carrinho, setCarrinho] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [orders, setOrders] = useState([]);
+  const [ordersCarrinho, setOrdersCarrinho] = useState([]);
 
   const context = useMemo(() => ({
     results,
@@ -17,7 +18,9 @@ function Provider({ children }) {
     setTotalPrice,
     orders,
     setOrders,
-  }), [results, carrinho, totalPrice, orders]);
+    ordersCarrinho,
+    setOrdersCarrinho,
+  }), [results, carrinho, totalPrice, orders, ordersCarrinho]);
   return (
     <deliveryContext.Provider value={ context }>
       { children }

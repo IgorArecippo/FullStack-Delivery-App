@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import Header from '../components/Header';
 import DeliveryContext from '../contextAPI/deliveryContext';
-import { requestRegister, setLocalStorage } from '../services/requests';
+import { requestRegisterSell, setLocalStorage } from '../services/requests';
 
 function Checkout() {
   const {
@@ -12,6 +12,7 @@ function Checkout() {
     setCarrinho,
     setTotalPrice,
     setOrders,
+    // setOrdersCarrinho,
   } = useContext(DeliveryContext);
   const history = useHistory();
   const [sellerId, setSellerId] = useState(1);
@@ -50,17 +51,23 @@ function Checkout() {
       sellerId,
       deliveryAddress: address,
       deliveryNumber,
-      status: 'pendente',
+      status: 'Pendente',
     };
     setOrders(infoOrders);
+    return infoOrders;
   };
 
   const finishOrder = async () => {
-    handleOrder();
+    const infoOrders = handleOrder();
     console.log(orders);
-    const saleId = await requestRegister('/customer/orders', orders);
-    console.log(saleId);
     const { token } = JSON.parse(localStorage.getItem('user'));
+    const authorization = { headers: { Authorization: token } };
+    const saleId = await requestRegisterSell(
+      '/customer/orders',
+      infoOrders,
+      authorization,
+    );
+    console.log(saleId);
     setLocalStorage(token);
     history.push(`/customer/orders/${saleId}`);
   };
