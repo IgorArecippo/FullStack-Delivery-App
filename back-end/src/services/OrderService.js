@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
-const { Sale } = require('../database/models');
-// const { Sale, SalesProducts } = require('../database/models');
+// const { Sale } = require('../database/models');
+const { Sale, SalesProducts } = require('../database/models');
 
 const createSale = async (data) => {
     const { userId,
@@ -9,6 +9,7 @@ const createSale = async (data) => {
         deliveryAddress,
         deliveryNumber,
         status,
+        carrinho,
     } = data;
     const sale = await Sale.create({ userId,
         sellerId,
@@ -21,8 +22,13 @@ const createSale = async (data) => {
 
     const { id } = sale;
 
-    // await Promise.all(carrinho.map((saleProduct) => SalesProducts
-    //     .create({ saleId: id, productId: saleProduct.id, quantity: saleProduct.quantidade })));
+    const newCarrinho = carrinho.map((p) => {
+        const obj = { saleId: id, productId: p.id, quantity: p.quantidade };
+        return obj;
+    });
+
+    await SalesProducts.bulkCreate(newCarrinho);
+
     return id;
 };
 

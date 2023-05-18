@@ -52,6 +52,7 @@ function Checkout() {
       deliveryAddress: address,
       deliveryNumber,
       status: 'Pendente',
+      carrinho,
     };
     setOrders(infoOrders);
     return infoOrders;

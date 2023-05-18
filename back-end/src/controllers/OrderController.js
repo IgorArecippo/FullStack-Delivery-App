@@ -4,7 +4,7 @@ const createSale = async (req, res, _next) => {
   const {
     userId,
     sellerId, totalPrice, deliveryAddress, deliveryNumber,
-    status } = req.body;
+    status, carrinho } = req.body;
   try {
     const sale = await OrderService.createSale({
       userId,
@@ -13,6 +13,7 @@ const createSale = async (req, res, _next) => {
       deliveryAddress,
       deliveryNumber,
       status,
+      carrinho,
     });
       return res.status(201).json(Number(sale));
   } catch (error) {
