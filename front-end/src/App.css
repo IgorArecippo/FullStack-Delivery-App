@@ -52,3 +52,26 @@
     transform: rotate(-10deg);
   }
 }
+
+.img-Products {
+  border-radius: 0px;
+  height: 357px;
+  left: 1.052734375px;
+  top: 2px;
+  width: 329px;
+}
+
+.total-button {
+  background-color: #0fa36b;
+  border-radius: 6px;
+  border-style: groove;
+  bottom: 0%;
+  height: 25px;
+  left: 65%;
+  position: fixed;
+  width: 190px;
+}
+
+body {
+  background-color: #464646;
+}

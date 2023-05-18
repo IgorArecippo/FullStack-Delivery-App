@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { requestLogin, setToken } from '../services/requests';
+import { requestLogin, setLocalStorage } from '../services/requests';
 
 export default function Login() {
   const history = useHistory();
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [btnDisabled, setDisabled] = useState(true);
-  // const [isLogged, setIsLogged] = useState(false);
+
   const [failedTryLogin, setFailedTryLogin] = useState(false);
 
   useEffect(() => {
@@ -28,30 +28,20 @@ export default function Login() {
     event.preventDefault();
 
     try {
-      const { token } = await requestLogin('/login', { email, password });
-      setToken(token);
+      const { token, name, role, id } = await requestLogin('/login', { email, password });
+      setLocalStorage(token);
 
-      // const { role } = await requestData('/login/role', { email, password });
+      localStorage.setItem('user', JSON.stringify({ token, email, name, role, id }));
 
-      localStorage.setItem('token', token);
-      // localStorage.setItem('role', role);
-
-      // setIsLogged(true);
       history.push('/customer/products');
     } catch (error) {
       setFailedTryLogin(true);
-      // setIsLogged(false);
     }
   };
 
   const handleChange = (value, setValue) => {
     setValue(value);
   };
-
-  // const handleClick = () => {
-  //   const user = { email };
-  //   localStorage.setItem('user', JSON.stringify(user));
-  // };
 
   return (
     <form>
